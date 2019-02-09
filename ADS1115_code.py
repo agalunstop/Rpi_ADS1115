@@ -7,6 +7,9 @@ import time
 # Import the ADS1x15 module.
 import Adafruit_ADS1x15
 
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BCM)
+LED = 5
 
 # Create an ADS1115 ADC (16-bit) instance.
 adc = Adafruit_ADS1x15.ADS1115()
@@ -34,8 +37,11 @@ print('Reading ADS1x15 values, press Ctrl-C to quit...')
 print('| {0:>6} | {1:>6} | {2:>6} | {3:>6} |'.format(*range(4)))
 print('-' * 37)
 # Main loop.
+ledState = False
+GPIO.setup(LED,GPIO.OUT)
 while True:
     # Read all the ADC channel values in a list.
+
     values = [0]*4
     for i in range(4):
         # Read the specified ADC channel using the previously set gain value.
@@ -50,4 +56,6 @@ while True:
     # Print the ADC values.
     print('| {0:>6} | {1:>6} | {2:>6} | {3:>6} |'.format(*values))
     # Pause for half a second.
+    ledState = not ledState
+    GPIO.output(LED, ledState)
     time.sleep(0.5)
