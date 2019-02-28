@@ -11,26 +11,13 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 LED = 5
 
+import numpy as np
+
+import matplotlib.pyplot as plt
 # Create an ADS1115 ADC (16-bit) instance.
 adc = Adafruit_ADS1x15.ADS1115()
-
-# Or create an ADS1015 ADC (12-bit) instance.
-#adc = Adafruit_ADS1x15.ADS1015()
-
-# Note you can change the I2C address from its default (0x48), and/or the I2C
-# bus by passing in these optional parameters:
-#adc = Adafruit_ADS1x15.ADS1015(address=0x49, busnum=1)
-
-# Choose a gain of 1 for reading voltages from 0 to 4.09V.
-# Or pick a different gain to change the range of voltages that are read:
-#  - 2/3 = +/-6.144V
-#  -   1 = +/-4.096V
-#  -   2 = +/-2.048V
-#  -   4 = +/-1.024V
-#  -   8 = +/-0.512V
-#  -  16 = +/-0.256V
-# See table 3 in the ADS1015/ADS1115 datasheet for more info on gain.
 GAIN = 1
+print 'Initializing...'
 
 print('Reading ADS1x15 values, press Ctrl-C to quit...')
 # Print nice channel column headers.
@@ -39,23 +26,94 @@ print('-' * 37)
 # Main loop.
 ledState = False
 GPIO.setup(LED,GPIO.OUT)
-while True:
+iteration = 100
+duration = 5        #keep min 2
+rawval = [[0 for x in range(iteration)] for y in range(4)]
+values = [[0 for x in range((duration-1)*iteration)] for y in range(4)]
+d = 0
+
+initialize = 1
+
+file = open("datafile.txt","w")
+
+while d<duration:
     # Read all the ADC channel values in a list.
 
-    values = [0]*4
-    for i in range(4):
-        # Read the specified ADC channel using the previously set gain value.
-        values[i] = adc.read_adc(i, gain=GAIN)
-        # Note you can also pass in an optional data_rate parameter that controls
-        # the ADC conversion time (in samples/second). Each chip has a different
-        # set of allowed data rate values, see datasheet Table 9 config register
-        # DR bit values.
-        #values[i] = adc.read_adc(i, gain=GAIN, data_rate=128)
-        # Each value will be a 12 or 16 bit signed integer value depending on the
-        # ADC (ADS1015 = 12-bit, ADS1115 = 16-bit).
-    # Print the ADC values.
-    print('| {0:>6} | {1:>6} | {2:>6} | {3:>6} |'.format(*values))
-    # Pause for half a second.
-    ledState = not ledState
-    GPIO.output(LED, ledState)
-    time.sleep(0.5)
+#    values = [0]*4
+
+
+
+    for j in range(iteration):
+        for i in range(4):
+            # Read the specified ADC channel using the previously set gain value.
+            rawval[i][j] = adc.read_adc(i, gain=GAIN)
+
+            if j == iteration-1: 
+                initialize = 0
+
+            n = (d-1)*iteration+j
+            if initialize != 1:
+                values[i][n] = sum(rawval[i])/iteration
+        if initialize != 1:
+            print n,':',values[0][n],values[1][n],values[2][n],values[3][n]
+            file.write(str(values[0][n]))
+            file.write(",")
+            file.write(str(values[0][n]))
+            file.write(",")
+            file.write(str(values[0][n]))
+            file.write(",")
+            file.write(str(values[0][n]))
+            file.write("\n")
+
+
+        ledState = not ledState
+        GPIO.output(LED, ledState)
+        #time.sleep(1.0)
+
+    d = d+1
+    print d
+
+file.close()
+xs = range((duration-1)*iteration)
+y0s = values[0]
+y1s = values[1]
+y2s = values[2]
+y3s = values[3]
+
+# Explicitly create our figure and subplots
+fig = plt.figure()
+ax0 = fig.add_subplot(2, 2, 1)
+ax1 = fig.add_subplot(2, 2, 2)
+ax2 = fig.add_subplot(2, 2, 3)
+ax3 = fig.add_subplot(2, 2, 4)
+
+# Draw our signals on the different subplots
+ax0.plot(xs, y0s)
+ax1.plot(xs, y1s)
+ax2.plot(xs, y2s)
+ax3.plot(xs, y3s)
+
+# Adding labels to subplots is a little different
+ax0.set_title('A0')
+ax0.set_xlabel('Time')
+ax0.set_ylabel('Value')
+ax0.set_ylim([0,40000])
+ax1.set_title('A1')
+ax1.set_xlabel('Time')
+ax1.set_ylabel('Value')
+ax1.set_ylim([0,40000])
+ax2.set_title('A2')
+ax2.set_xlabel('Time')
+ax2.set_ylabel('Value')
+ax2.set_ylim([0,40000])
+ax3.set_title('A3')
+ax3.set_xlabel('Time')
+ax3.set_ylabel('Value')
+ax3.set_ylim([0,40000])
+
+# We can use the subplots_adjust function to change the space between subplots
+#plt.subplots_adjust(hspace=0.6)
+
+# Draw all the plots!
+plt.show()
+
