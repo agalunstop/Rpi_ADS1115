@@ -38,7 +38,7 @@ initialize = 1
 
 
 #while d<duration:
-#file = open("datafile.txt","w+")
+file = open("datafile.txt","w+")
 
 while 1:
     # Read all the ADC channel values in a list.
@@ -60,22 +60,23 @@ while 1:
                 values[i] = sum(rawval[i])/iteration
         if initialize != 1 and n>=0:
             #print n,':',values[0],values[1],values[2],values[3]
-            print '0:',values[0]
+            print d,values[0]
             #sys.stdout.write('0:'+str(values[0])+'\n')
             #file.write(str(n))
             #file.write("\t")
-            #file.write(str(values[0]))
+            file.write(str(values[0]))
             #file.write(",")
             #file.write(str(values[0][n]))
             #file.write(",")
             #file.write(str(values[0][n]))
             #file.write(",")
             #file.write(str(values[0][n]))
-            #file.write("\n")
-            #file.close()
+            file.write("\n")
             #file = open("datafile.txt","w+")
 
             #time.sleep(0.5)
+            file.close()
+            file = open("datafile.txt","a+")
 
         ledState = not ledState
         GPIO.output(LED, ledState)
@@ -88,7 +89,7 @@ while 1:
     #time.sleep(0.05)
 
 
-#file.close()
+file.close()
     #system('gnuplot liveplot.gnu')
 #xs = range((duration-1)*iteration)
 #y0s = values[0]

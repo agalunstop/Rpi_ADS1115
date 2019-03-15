@@ -5,16 +5,17 @@
  package require Tk;         # <<<< GOOD STYLE
 
 #graph prep
- set width 1000
+ set width 500
  set height 500
- set scaling 100
- canvas .c -width $width -height $height -background white -xscrollincrement 1
+ canvas .c -width $width -height $height -background white
  bind .c <Configure> {
     bind .c <Configure> {}
     .c xview scroll 0 unit
     set t 0
 }
 pack .c
+  
+#.c create line 0 12 1 13
 
 #Initial reading
  set filename "datafile.txt"
@@ -32,13 +33,13 @@ pack .c
  
  #printing file
  set oldx 0
- set oldy [expr 499-[expr [lindex $lines 0]/$scaling]]
+ set oldy [expr 499-[expr [lindex $lines 0]/1000]]
  for {set i 1} {$i < [llength $lines]} {incr i} {
 	 #puts "$i : [lindex $lines $i]"
 	 set newx $i
-	 set newy [expr 499-[expr [lindex $lines $i]/$scaling]]
+	 set newy [expr 499-[expr [lindex $lines $i]/1000]]
 	 .c create line $oldx $oldy $newx $newy -fill blue
-	 if {$i > $width} { .c xview scroll 1 unit }
+	 if {$i > $width} { .c xview scroll 5 unit }
 	 set oldx $newx
 	 set oldy $newy
  }
@@ -46,7 +47,7 @@ pack .c
 ## after 10000
 ## #looping to detect change
 coroutine mainloop apply {{} {         
-    global i width filename accessTime oldx oldy scaling
+    global i filename accessTime oldx oldy
     while 1 {
         after 1000 [info coroutine];   
         yield;                         
@@ -68,9 +69,8 @@ coroutine mainloop apply {{} {
      	   		for {} {$i < [llength $lines]} {incr i} {
      	    			puts "$i : [lindex $lines $i]"
      	    			set newx $i
-     	    			set newy [expr 499-[expr [lindex $lines $i]/$scaling]]
+     	    			set newy [expr 499-[expr [lindex $lines $i]/1000]]
      	    			.c create line $oldx $oldy $newx $newy -fill blue
-	 			if {$i > $width} { .c xview scroll 1 unit }
      	    			set oldx $newx
      	    			set oldy $newy
      	   		}
