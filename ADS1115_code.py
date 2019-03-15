@@ -60,17 +60,17 @@ while 1:
                 values[i] = sum(rawval[i])/iteration
         if initialize != 1 and n>=0:
             #print n,':',values[0],values[1],values[2],values[3]
-            print d,values[0]
+            print d,values[0],values[1],values[2],values[3]
             #sys.stdout.write('0:'+str(values[0])+'\n')
             #file.write(str(n))
             #file.write("\t")
             file.write(str(values[0]))
-            #file.write(",")
-            #file.write(str(values[0][n]))
-            #file.write(",")
-            #file.write(str(values[0][n]))
-            #file.write(",")
-            #file.write(str(values[0][n]))
+            file.write(",")
+            file.write(str(values[1]))
+            file.write(",")
+            file.write(str(values[2]))
+            file.write(",")
+            file.write(str(values[3]))
             file.write("\n")
             #file = open("datafile.txt","w+")
 

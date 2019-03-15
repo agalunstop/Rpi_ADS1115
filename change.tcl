@@ -32,21 +32,45 @@ pack .c
  
  #printing file
  set oldx 0
- set oldy [expr 499-[expr [lindex $lines 0]/$scaling]]
+ #getting value of each sensor reading
+ set val0 [lindex [split [lindex $lines 0] ","] 0]
+ set val1 [lindex [split [lindex $lines 0] ","] 1]
+ set val2 [lindex [split [lindex $lines 0] ","] 2]
+ set val3 [lindex [split [lindex $lines 0] ","] 3]
+ set oldy0 [expr 499-[expr $val0/$scaling]]
+ set oldy1 [expr 499-[expr $val1/$scaling]]
+ set oldy2 [expr 499-[expr $val2/$scaling]]
+ set oldy3 [expr 499-[expr $val3/$scaling]]
+
  for {set i 1} {$i < [llength $lines]} {incr i} {
 	 #puts "$i : [lindex $lines $i]"
 	 set newx $i
-	 set newy [expr 499-[expr [lindex $lines $i]/$scaling]]
-	 .c create line $oldx $oldy $newx $newy -fill blue
+	 #getting value of each sensor reading
+	 set val0 [lindex [split [lindex $lines $i] ","] 0]
+	 set val1 [lindex [split [lindex $lines $i] ","] 1]
+	 set val2 [lindex [split [lindex $lines $i] ","] 2]
+	 set val3 [lindex [split [lindex $lines $i] ","] 3]
+
+	 set newy0 [expr 499-[expr $val0/$scaling]]
+	 set newy1 [expr 499-[expr $val1/$scaling]]
+	 set newy2 [expr 499-[expr $val2/$scaling]]
+	 set newy3 [expr 499-[expr $val3/$scaling]]
+	 .c create line $oldx $oldy0 $newx $newy0 -fill blue
+	 .c create line $oldx $oldy1 $newx $newy1 -fill black
+	 .c create line $oldx $oldy2 $newx $newy2 -fill green
+	 .c create line $oldx $oldy3 $newx $newy3 -fill red
 	 if {$i > $width} { .c xview scroll 1 unit }
 	 set oldx $newx
-	 set oldy $newy
+	 set oldy0 $newy0
+	 set oldy1 $newy1
+	 set oldy2 $newy2
+	 set oldy3 $newy3
  }
 
 ## after 10000
 ## #looping to detect change
 coroutine mainloop apply {{} {         
-    global i width filename accessTime oldx oldy scaling
+    global i width filename accessTime oldx oldy0 oldy1 oldy2 oldy3 scaling
     while 1 {
         after 1000 [info coroutine];   
         yield;                         
@@ -68,11 +92,26 @@ coroutine mainloop apply {{} {
      	   		for {} {$i < [llength $lines]} {incr i} {
      	    			puts "$i : [lindex $lines $i]"
      	    			set newx $i
-     	    			set newy [expr 499-[expr [lindex $lines $i]/$scaling]]
-     	    			.c create line $oldx $oldy $newx $newy -fill blue
+	 			#getting value of each sensor reading
+	 			set val0 [lindex [split [lindex $lines $i] ","] 0]
+	 			set val1 [lindex [split [lindex $lines $i] ","] 1]
+	 			set val2 [lindex [split [lindex $lines $i] ","] 2]
+	 			set val3 [lindex [split [lindex $lines $i] ","] 3]
+
+	 			set newy0 [expr 499-[expr $val0/$scaling]]
+	 			set newy1 [expr 499-[expr $val1/$scaling]]
+	 			set newy2 [expr 499-[expr $val2/$scaling]]
+	 			set newy3 [expr 499-[expr $val3/$scaling]]
+	 			.c create line $oldx $oldy0 $newx $newy0 -fill blue
+	 			.c create line $oldx $oldy1 $newx $newy1 -fill black
+	 			.c create line $oldx $oldy2 $newx $newy2 -fill green
+	 			.c create line $oldx $oldy3 $newx $newy3 -fill red
 	 			if {$i > $width} { .c xview scroll 1 unit }
      	    			set oldx $newx
-     	    			set oldy $newy
+     	    			set oldy0 $newy0
+     	    			set oldy1 $newy1
+     	    			set oldy2 $newy2
+     	    			set oldy3 $newy3
      	   		}
      		}
      	}
