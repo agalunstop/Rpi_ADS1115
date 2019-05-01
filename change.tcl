@@ -56,7 +56,7 @@ pack .c
 	 set newy2 [expr 499-[expr $val2/$scaling]]
 	 set newy3 [expr 499-[expr $val3/$scaling]]
 	 .c create line $oldx $oldy0 $newx $newy0 -fill blue
-	 .c create line $oldx $oldy1 $newx $newy1 -fill black
+	 #.c create line $oldx $oldy1 $newx $newy1 -fill black
 	 .c create line $oldx $oldy2 $newx $newy2 -fill green
 	 .c create line $oldx $oldy3 $newx $newy3 -fill red
 	 if {$i > $width} { .c xview scroll 1 unit }
@@ -103,7 +103,7 @@ coroutine mainloop apply {{} {
 	 			set newy2 [expr 499-[expr $val2/$scaling]]
 	 			set newy3 [expr 499-[expr $val3/$scaling]]
 	 			.c create line $oldx $oldy0 $newx $newy0 -fill blue
-	 			.c create line $oldx $oldy1 $newx $newy1 -fill black
+	 			#.c create line $oldx $oldy1 $newx $newy1 -fill black
 	 			.c create line $oldx $oldy2 $newx $newy2 -fill green
 	 			.c create line $oldx $oldy3 $newx $newy3 -fill red
 	 			if {$i > $width} { .c xview scroll 1 unit }
